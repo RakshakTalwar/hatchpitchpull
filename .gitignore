@@ -2,3 +2,4 @@ src/auth_info.txt
 auth_info.txt
 sampledump.json
 *.pyc
+*.egg-info

@@ -1,5 +1,27 @@
-This assumes you are on Linux. If you aren't tough luck!
+## This assumes you are on Linux
+## Make sure you have pip installed
+[Instructions](https://pip.pypa.io/en/stable/installing/#using-os-package-managers) to install pip using an OS package manager
 
-Commands to install prerequisites:
-$ sudo chmod +x setup.sh
-$ sudo ./setup.sh
+### Commands to install prerequisites:  
+```sh
+$ sudo chmod +x setup.sh  
+$ sudo ./setup.sh  
+```
+
+### Commands to install this package:  
+```sh
+$ sudo pip install -e ./
+```
+
+### To set in authentication details:  
+Go to:  
+src/  
+Then, create a file called: auth_info.txt  
+Now type:  
+- The email address as the first line  
+- The email address' password as the second line  
+- The F6S API Key as the third line  
+Save and close this file  
+
+Run the src/main.py file whenever you would like the program to run.  
+Tip: It's advised to set a cronjob process on your Linux machine to run it periodically
