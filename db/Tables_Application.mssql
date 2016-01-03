@@ -1,0 +1,71 @@
+BEGIN; 
+
+CREATE TABLE "F_Application"(
+	"Started On" DateTime,
+	"Submitted On" DateTime,
+	"CompanyTeam" Text NOT NULL,
+	"Short Description" Text,
+	"Long Description" Text,
+	"City" Text,
+	"StateProvince" Text,
+	"Country" Text,
+	"Markets" Text,
+	"Company Stage" Text,
+	"Industry Sector" Text,
+	"Company Website" Text,
+	"Company Twitter" Text,
+	"Company Facebook" Text,
+	"Company LinkedIn" Text,
+	"Contact First Name" Text,
+	"Contact Last Name" Text,
+	"Contact Email" Text,
+	"Contact Phone" Text,
+	"Employees" Numeric DEFAULT 0,
+	"Founders and Execs" Text,
+	"Revenue" Numeric DEFAULT 0,
+	"Current Investment" Numeric DEFAULT 0,
+	"InvestorsEquity" Text,
+	"Customer Type" Text,
+	"Funding" Text,
+	"Product Launch" Date,
+	"Grapevine" Text,
+	"Accelerators" Text,
+	"Pitching" Text,
+	"Availability" Text,
+	"Agreement" Text,
+	"AppStatus" Text );
+
+END; 
+
+
+BEGIN; 
+
+CREATE TABLE "H_Application"(
+	"Submitted On" DateTime,
+	"Company" Text NOT NULL,
+	"Short Description" Text,
+	"City" Text,
+	"StateProvince" Text,
+	"Country" Text,
+	"Industry Sector" Text,
+	"Company Website" Text,
+	"Company Social" Text,
+	"Contact First Name" Text,
+	"Contact Last Name" Text,
+	"Contact Email" Text,
+	"Contact Phone" Text,
+	"Employees" Numeric DEFAULT 0,
+	"Founders and Execs" Text,
+	"Revenue" Numeric,
+	"Current Investment" Numeric DEFAULT 0,
+	"Investors" Text,
+	"Funding" Text,
+	"Launch" Date,
+	"Grapevine" Text,
+	"Accelerators" Text,
+	"Pitching" Text,
+	"Availability" Text,
+	"Agreement" Text,
+CONSTRAINT "unique_Company" UNIQUE ( "Company" ) );
+
+END; 
