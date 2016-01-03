@@ -167,21 +167,35 @@ class DBHandler():
         """Saves a dict with fields: [data, fields]
         Where data is a list of dicts, and fields is a list of fields which corresponds
         with the field names in the respective table"""
-        pass
+
+        # create a new cursor object
+        self.cursor = self.connection.cursor()
+
+        # find all of the names of the companies that already exist in the respective table
+        existing = self._existing_names(table_name)
+
+        # save the data into the table for all new companies
+        for company in doc['data']:
+            if company[self._company_name_field_name(table_name)] not in existing: #proceed to save this company into the table if it already doesn't exist in the table
+
 
     def _existing_names(self, table_name):
         """Returns a list of company names that already exist in the respective table"""
         # reinstate the cursor object
-        self.cursor = self.connection.cursor()
+        self.t_cursor = self.connection.cursor()
 
-        # handle the different field name for company names
+        # find the company names already present
+        self.t_cursor.execute("SELECT {0} FROM {1}".format(self._company_name_field_name(table_name), table_name))
+        items = self.t_cursor.fetchall()
+        all_names = [inner[0] for inner in items] # make it a list of only strings by taking the first item of every tuple
+
+        return all_names
+
+    @staticmethod
+    def _company_name_field_name(table_name):
+        """Returns the field name in the SQL table for company name"""
         if table_name == 'H_Application':
             field_name = "Company"
         elif table_name == 'F_Application':
             field_name = "CompanyTeam"
-        # find the company names already present
-        self.cursor.execute("SELECT {0} FROM {1}".format(field_name, table_name))
-        items = self.cursor.fetchall()
-        all_names = [inner[0] for inner in items] # make it a list of only strings by taking the first item of every tuple
-
-        return all_names
+        return field_name
