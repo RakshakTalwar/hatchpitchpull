@@ -7,9 +7,11 @@ Released under the Apache 2 License
 import json, pdb
 from hatchpitchpull.hatchpitchpull import F6S, GS, DBHandler
 
-f = F6S()
+# initialize instances
+fs = F6S()
+gs = GS()
+db_handler = DBHandler()
 
-items = f.grab_data()
-
-with open('sampledump.json', 'w') as file:
-    json.dump(items['data'], file)
+# pull data from F6S site
+f6s_data = fs.grab_data()
+# store into the respective table

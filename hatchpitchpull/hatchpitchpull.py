@@ -160,14 +160,28 @@ class DBHandler():
     """Defines object which handles saving data into the sqlite db"""
     def __init__(self, db_path='db/HATCHscreening.db'):
         # create connection to sqlite database to make cursor object
-        try:
-            self.connection = sql.connect(db_path)
-            self.cursor = self.connection.cursor()
-        except Exception as e:
-            raise e
+        self.connection = sql.connect(db_path)
+        self.cursor = self.connection.cursor()
 
     def save(self, table_name, doc):
-        """Saves a JSON document with fields: [data, fields]
-        Where data is a list of JSON objects, and fields is a list of fields which corresponds
+        """Saves a dict with fields: [data, fields]
+        Where data is a list of dicts, and fields is a list of fields which corresponds
         with the field names in the respective table"""
         pass
+
+    def _existing_names(self, table_name):
+        """Returns a list of company names that already exist in the respective table"""
+        # reinstate the cursor object
+        self.cursor = self.connection.cursor()
+
+        # handle the different field name for company names
+        if table_name == 'H_Application':
+            field_name = "Company"
+        elif table_name == 'F_Application':
+            field_name = "CompanyTeam"
+        # find the company names already present
+        self.cursor.execute("SELECT {0} FROM {1}".format(field_name, table_name))
+        items = self.cursor.fetchall()
+        all_names = [inner[0] for inner in items] # make it a list of only strings by taking the first item of every tuple
+
+        return all_names
