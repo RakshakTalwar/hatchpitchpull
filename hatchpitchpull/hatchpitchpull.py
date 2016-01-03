@@ -121,14 +121,20 @@ class F6S():
                         temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]]
 
                     elif len(nest_list) == 3:
-                        temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]][nest_list[2]]
+                        # note there are two types of nest_list of length 3, we need to handle them seperately
+                        if isinstance(nest_list[1], int): # the first type is where item at index 1 is an integer
+                            temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]][nest_list[2]]
+                        elif nest_list[1] == '*': # the second type is where item at index 1 is an asterisk (*)
+                            # in this case we need to cycle through the list given after we pull it from j_object.
+                            # then we join all of the values given in the field from nest_list[2]
+                            str_to_return = ''
+                            for item in j_object[nest_list[0]]:
+                                str_to_return += item[nest_list[2]]
+
+                            temp_obj[sql_field] = str_to_return
 
                     elif len(nest_list) == 4:
-                        # note there are two types of nest_list of length 4, we need to handle them seperately
-                        if isinstance(nest_list[1], int): # the first type is where item at index 1 is an integer
-                            pass
-                        elif nest_list[1] == '*': # the second type is where item at index 1 is an asterisk (*)
-                            pass
+                        pass
 class GS():
     """Defines object to pull data from gspread API"""
     def grab_data(self):
