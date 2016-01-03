@@ -19,7 +19,7 @@ Now type:
 Save and close this file  
 
 ### Running the program
-Run the hatchpitchpull/main.py file whenever you would like the program to run.  
+Run the main.py file whenever you would like the program to run.  
 Tip: It's advised to set a cronjob process on your Linux machine to run it periodically
 
 ### Accessing the SQLite DB

@@ -4,10 +4,14 @@ Copyright 2016 (c) Rakshak Talwar
 Released under the Apache 2 License
 """
 
-import pdb, time
+import pdb, re, time
+import HTMLParser
 import sqlite3 as sql
 import requests
 import gspread
+
+### global variables ###
+hparse = HTMLParser.HTMLParser()
 
 ### gather authentication information ###
 auth_file_location = 'auth_info.txt'
@@ -71,8 +75,8 @@ class F6S():
         ]
 
     def grab_data(self):
-        """Pulls all relevant data from F6S REST API. Returns a JSON
-        object with fields: data and fields (see save method under DBHandler class)"""
+        """Pulls all relevant data from F6S REST API. Returns a dict
+         with fields: data and fields (see save method under DBHandler class)"""
 
         self.all_data = [] # list stores JSON objects of all companies' data
 
@@ -95,7 +99,7 @@ class F6S():
 
     def _piece_extractor(self, j_objects):
         """Extracts the SQL tables corresponding piece of information from a
-        JSON object representing a single company. Returns a list of JSON objects
+        dict representing a single company. Returns a list of dicts
         where the field names correspond with the needed field names for the SQL table"""
 
         self.cleaned_objs = [] # a list of cleaned JSON objects to be returned
@@ -123,18 +127,30 @@ class F6S():
                     elif len(nest_list) == 3:
                         # note there are two types of nest_list of length 3, we need to handle them seperately
                         if isinstance(nest_list[1], int): # the first type is where item at index 1 is an integer
-                            temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]][nest_list[2]]
+                            temp_obj[sql_field] = hparse.unescape(j_object[nest_list[0]][nest_list[1]][nest_list[2]])
                         elif nest_list[1] == '*': # the second type is where item at index 1 is an asterisk (*)
                             # in this case we need to cycle through the list given after we pull it from j_object.
                             # then we join all of the values given in the field from nest_list[2]
                             str_to_return = ''
                             for item in j_object[nest_list[0]]:
-                                str_to_return += item[nest_list[2]]
+                                str_to_return = str_to_return + ', ' + item[nest_list[2]]
 
-                            temp_obj[sql_field] = str_to_return
+                            temp_obj[sql_field] = str_to_return.encode('ascii', 'ignore')
 
                     elif len(nest_list) == 4:
-                        pass
+                        str_to_return = ''
+                        if isinstance(j_object[nest_list[0]][nest_list[1]][nest_list[2]], list):
+                            for item in j_object[nest_list[0]][nest_list[1]][nest_list[2]]:
+                                str_to_return = item + ', ' + str_to_return
+                        elif isinstance(j_object[nest_list[0]][nest_list[1]][nest_list[2]], str):
+                                str_to_return = j_object[nest_list[0]][nest_list[1]][nest_list[2]].encode('ascii', 'ignore')
+                        temp_obj[sql_field] = str_to_return
+
+            # add the cleaned object
+            self.cleaned_objs.append(temp_obj)
+
+        return self.cleaned_objs
+
 class GS():
     """Defines object to pull data from gspread API"""
     def grab_data(self):
