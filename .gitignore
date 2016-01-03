@@ -3,3 +3,4 @@ auth_info.txt
 sampledump.json
 *.pyc
 *.egg-info
+.cache*

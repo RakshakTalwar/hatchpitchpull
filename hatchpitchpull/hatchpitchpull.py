@@ -10,7 +10,7 @@ import requests
 import gspread
 
 ### gather authentication information ###
-auth_file_location = 'src/auth_info.txt'
+auth_file_location = 'auth_info.txt'
 auth_ls = []
 with open(auth_file_location, 'r') as auth_file:
     auth_ls = [item.strip() for item in auth_file.readlines()]
@@ -32,8 +32,12 @@ class DBHandler():
     """Defines object which handles saving data into the sqlite db"""
 
     def __init__(self, db_path='db/HATCHscreening.db'):
-        # create connection to sqlite database
-        self.connection = sql.connect(db_path)
+        # create connection to sqlite database to make cursor object
+        try:
+            self.connection = sql.connect(db_path)
+            self.cursor = self.connection.cursor()
+        except Exception as e:
+            raise e
 
     def save(self, table_name, doc):
         """Saves a JSON document with fields: [data, fields]

@@ -8,5 +8,5 @@ setup(name='hatchpitchpull',
       author='Rakshak Talwar',
       author_email='rakshaktalwar@gmail.com',
       url='',
-      packages=['src'],
+      packages=['hatchpitchpull'],
       )
