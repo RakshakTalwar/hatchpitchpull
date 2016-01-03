@@ -9,7 +9,7 @@ $ sudo chmod +x setup.sh
 $ sudo ./setup.sh  
 ```
 
-### To set in authentication details:  
+### To configure authentication details:  
 Create a file called: auth_info.txt  
 Now type:  
 - The email address as the first line  

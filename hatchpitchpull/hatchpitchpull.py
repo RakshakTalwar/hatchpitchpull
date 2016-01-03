@@ -77,7 +77,7 @@ class F6S():
         self.all_data = [] # list stores JSON objects of all companies' data
 
         page = 1
-        while True:
+        while page:
             # pull JSON object
             payload = {'page' : page, 'api_key' : self.api_key}
             r = requests.get(self.request_url, params=payload)
@@ -89,15 +89,46 @@ class F6S():
                 page += 1 # increment page variable to pick up new data on next run
                 time.sleep(0.02) # wait for a bit before submitting next request
             else: # if no data exists, exit this loop
-                break
+                page = False
 
-    def _piece_extractor(self, j_object):
+        return {'data' : self._piece_extractor(self.all_data), 'fields' : self.sql_fields}
+
+    def _piece_extractor(self, j_objects):
         """Extracts the SQL tables corresponding piece of information from a
-        JSON object representing a single company. Returns a JSON object with the field
-        names that correspond with the needed field names for the SQL table"""
+        JSON object representing a single company. Returns a list of JSON objects
+        where the field names correspond with the needed field names for the SQL table"""
 
+        self.cleaned_objs = [] # a list of cleaned JSON objects to be returned
 
+        # go through each object from the F6S API calls and create semi-copies with relevant and corresponding fields
+        for j_object in j_objects:
 
+            # create a temporary object, will be appended to the cleaned_objs list
+            temp_obj = {}
+
+            # fill up the temp_obj with the relevant information
+            for index, sql_field in enumerate(self.sql_fields):
+
+                # handle the different types of nested data sequences
+                if isinstance(self.json_fields[index], str): # if the field is directly present, no nesting
+                    temp_obj[sql_field] = j_object[self.json_fields[index]]
+
+                elif isinstance(self.json_fields[index], list): # handles nested cases
+
+                    nest_list = self.json_fields[index] # for brevity's sake
+
+                    if len(nest_list) == 2:
+                        temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]]
+
+                    elif len(nest_list) == 3:
+                        temp_obj[sql_field] = j_object[nest_list[0]][nest_list[1]][nest_list[2]]
+
+                    elif len(nest_list) == 4:
+                        # note there are two types of nest_list of length 4, we need to handle them seperately
+                        if isinstance(nest_list[1], int): # the first type is where item at index 1 is an integer
+                            pass
+                        elif nest_list[1] == '*': # the second type is where item at index 1 is an asterisk (*)
+                            pass
 class GS():
     """Defines object to pull data from gspread API"""
     def grab_data(self):
