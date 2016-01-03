@@ -30,20 +30,20 @@ class F6S():
 
         # define the field names for the json responses and sql table, field names correspond 1 to 1
         self.sql_fields = [
-            "Started On",
-        	"Submitted On",
+            "StartedOn",
+        	"SubmittedOn",
         	"CompanyTeam",
         	"City",
         	"Country",
-        	"Industry Sector",
-        	"Contact First Name",
-        	"Contact Last Name",
-        	"Contact Email",
-        	"Contact Phone",
+        	"IndustrySector",
+        	"ContactFirstName",
+        	"ContactLastName",
+        	"ContactEmail",
+        	"ContactPhone",
         	"Employees",
-        	"Founders and Execs",
+        	"FoundersandExecs",
         	"InvestorsEquity",
-        	"Product Launch",
+        	"ProductLaunch",
         	"Grapevine",
         	"Accelerators",
         	"Pitching",
@@ -163,39 +163,70 @@ class DBHandler():
         self.connection = sql.connect(db_path)
         self.cursor = self.connection.cursor()
 
-    def save(self, table_name, doc):
+    def save(self, table_name, doc, sql_fields):
         """Saves a dict with fields: [data, fields]
         Where data is a list of dicts, and fields is a list of fields which corresponds
         with the field names in the respective table"""
 
-        # create a new cursor object
-        self.cursor = self.connection.cursor()
+        try:
+            # create a new cursor object
+            self.cursor = self.connection.cursor()
 
-        # find all of the names of the companies that already exist in the respective table
-        existing = self._existing_names(table_name)
+            if table_name == 'F_Application':
+                self.cursor.executescript("""
+                    DROP TABLE IF EXISTS {0};
+                    CREATE TABLE {0}(StartedOn TEXT,
+                	SubmittedOn TEXT,
+                	CompanyTeam TEXT NOT NULL,
+                	City TEXT,
+                	Country TEXT,
+                	Industry Sector TEXT,
+                	ContactFirstName TEXT,
+                	ContactLastName TEXT,
+                	ContactEmail TEXT,
+                	ContactPhone TEXT,
+                	Employees INTEGER,
+                	FoundersandExecs TEXT,
+                	InvestorsEquity TEXT,
+                	ProductLaunch TEXT,
+                	Grapevine TEXT,
+                	Accelerators TEXT,
+                	Pitching TEXT,
+                	Availability TEXT,
+                	Agreement TEXT,
+                	AppStatus TEXT);
+                    {1}
+                """.format(table_name, self._all_insertions(table_name, doc, sql_fields)))
 
-        # save the data into the table for all new companies
-        for company in doc['data']:
-            if company[self._company_name_field_name(table_name)] not in existing: #proceed to save this company into the table if it already doesn't exist in the table
+            elif table_name == 'H_Application':
+                pass
 
+            self.connection.commit()
 
-    def _existing_names(self, table_name):
-        """Returns a list of company names that already exist in the respective table"""
-        # reinstate the cursor object
-        self.t_cursor = self.connection.cursor()
+        except sql.Error, e:
+            if self.connection:
+                self.connection.rollback()
+        finally:
+            if self.connection:
+                self.connection.close()
 
-        # find the company names already present
-        self.t_cursor.execute("SELECT {0} FROM {1}".format(self._company_name_field_name(table_name), table_name))
-        items = self.t_cursor.fetchall()
-        all_names = [inner[0] for inner in items] # make it a list of only strings by taking the first item of every tuple
+    def _all_insertions(self, table_name, doc, sql_fields):
+        """Returns a string with all insertions to be used within an executescript method.
+        Accepts the data returned by grab_data method"""
 
-        return all_names
+        # this will be returned
+        insertion_string = ""
 
-    @staticmethod
-    def _company_name_field_name(table_name):
-        """Returns the field name in the SQL table for company name"""
-        if table_name == 'H_Application':
-            field_name = "Company"
-        elif table_name == 'F_Application':
-            field_name = "CompanyTeam"
-        return field_name
+        # fill the insertion_string with contents
+        for item in doc['data']:
+            if table_name == 'F_Application':
+                vals = []
+                for key in sql_fields:
+                    vals.append(item[key])
+                vals = tuple(vals)
+                pdb.set_trace()
+                insertion_string += "INSERT INTO {0} VALUES{1};".format(table_name, vals)
+            elif table_name == 'H_Application':
+                pass
+
+        return insertion_string

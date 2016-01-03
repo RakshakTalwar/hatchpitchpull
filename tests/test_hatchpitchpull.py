@@ -21,5 +21,3 @@ def test_init():
 inst = DBHandler(db_path='db/HATCHscreening.db')
 def test_save():
     pass
-def test_existing_names():
-    assert isinstance(inst._existing_names('H_Application'), list)
