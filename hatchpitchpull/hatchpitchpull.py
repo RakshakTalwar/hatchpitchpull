@@ -4,7 +4,7 @@ Copyright 2016 (c) Rakshak Talwar
 Released under the Apache 2 License
 """
 
-import pdb
+import pdb, time
 import sqlite3 as sql
 import requests
 import gspread
@@ -24,6 +24,52 @@ class F6S():
         self.api_key = F6S_KEY
         self.request_url = 'https://api.f6s.com/hatchpitchsxsw2016/applications'
 
+        # define the field names for the json responses and sql table, field names correspond 1 to 1
+        self.sql_fields = [
+            "Started On",
+        	"Submitted On",
+        	"CompanyTeam",
+        	"City",
+        	"Country",
+        	"Industry Sector",
+        	"Contact First Name",
+        	"Contact Last Name",
+        	"Contact Email",
+        	"Contact Phone",
+        	"Employees",
+        	"Founders and Execs",
+        	"InvestorsEquity",
+        	"Product Launch",
+        	"Grapevine",
+        	"Accelerators",
+        	"Pitching",
+        	"Availability",
+        	"Agreement",
+        	"AppStatus"
+        ]
+        self.json_fields = [
+            "date_created",
+            "date_finalized",
+            "name",
+            ["location", "city"],
+            ["location", "country"],
+            ["questions", 0, "field_response", '*'],
+            ["questions", 4, "question_response"],
+            ["questions", 5, "question_response"],
+            ["questions", 6, "question_response"],
+            ["questions", 7, "question_response"],
+            ["questions", 3, "question_response"],
+            ["members", '*', "name"],
+            ["questions", 2, "question_response"],
+            ["questions", 1, "field_response"],
+            ["questions", 8, "question_response"],
+            ["questions", 9, "question_response"],
+            ["questions", 10, "question_response"],
+            ["questions", 11, "field_response", '*'],
+            ["questions", 12, "field_response", '*'],
+            "status"
+        ]
+
     def grab_data(self):
         """Pulls all relevant data from F6S REST API. Returns a JSON
         object with fields: data and fields (see save method under DBHandler class)"""
@@ -41,10 +87,15 @@ class F6S():
             if 'data' in j: # check to see if data is present in most recent request
                 self.all_data.extend(j['data'])
                 page += 1 # increment page variable to pick up new data on next run
+                time.sleep(0.02) # wait for a bit before submitting next request
             else: # if no data exists, exit this loop
                 break
 
-        
+    def _piece_extractor(self, j_object):
+        """Extracts the SQL tables corresponding piece of information from a
+        JSON object representing a single company. Returns a JSON object with the field
+        names that correspond with the needed field names for the SQL table"""
+
 
 
 class GS():

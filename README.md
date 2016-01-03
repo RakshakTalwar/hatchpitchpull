@@ -2,7 +2,8 @@
 ## Make sure you have pip installed
 [Instructions](https://pip.pypa.io/en/stable/installing/#using-os-package-managers) to install pip using an OS package manager
 
-### Commands to install this package (automatically installs prerequisites):  
+### Commands to install this package:  
+prerequisites are automatically installed  
 ```sh
 $ sudo chmod +x setup.sh  
 $ sudo ./setup.sh  
@@ -21,5 +22,5 @@ Save and close this file
 Run the hatchpitchpull/main.py file whenever you would like the program to run.  
 Tip: It's advised to set a cronjob process on your Linux machine to run it periodically
 
-### Obtaining the sql db
+### Accessing the SQLite DB
 The sqlite db file is stored as db/HATCHscreening.db
