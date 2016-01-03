@@ -20,17 +20,40 @@ EMAIL, EMAIL_PWD, F6S_KEY = auth_ls
 
 class F6S():
     """Defines object to pull data from F6S API"""
-    def grab_data():
-        pass
+    def __init__(self):
+        self.api_key = F6S_KEY
+        self.request_url = 'https://api.f6s.com/hatchpitchsxsw2016/applications'
+
+    def grab_data(self):
+        """Pulls all relevant data from F6S REST API. Returns a JSON
+        object with fields: data and fields (see save method under DBHandler class)"""
+
+        self.all_data = [] # list stores JSON objects of all companies' data
+
+        page = 1
+        while True:
+            # pull JSON object
+            payload = {'page' : page, 'api_key' : self.api_key}
+            r = requests.get(self.request_url, params=payload)
+            j = r.json() # create JSON object from response
+
+            # extend all_data with data in this json response if the data exists
+            if 'data' in j: # check to see if data is present in most recent request
+                self.all_data.extend(j['data'])
+                page += 1 # increment page variable to pick up new data on next run
+            else: # if no data exists, exit this loop
+                break
+
+        
+
 
 class GS():
     """Defines object to pull data from gspread API"""
-    def grab_data():
+    def grab_data(self):
         pass
 
 class DBHandler():
     """Defines object which handles saving data into the sqlite db"""
-
     def __init__(self, db_path='db/HATCHscreening.db'):
         # create connection to sqlite database to make cursor object
         try:

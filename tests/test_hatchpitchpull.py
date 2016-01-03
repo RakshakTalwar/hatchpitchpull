@@ -16,7 +16,7 @@ def test_grab_data():
 
 ### Testing DBHandler class ###
 def test_init():
-    inst = DBHandler()
+    inst = DBHandler(db_path='db/HATCHscreening.db')
 
 def test_save():
     pass
