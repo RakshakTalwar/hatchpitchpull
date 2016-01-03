@@ -4,10 +4,19 @@ Copyright 2016 (c) Rakshak Talwar
 Released under the Apache 2 License
 """
 
-from src.hatchpitchpull import *
+from src.hatchpitchpull import F6S, GS, DBHandler
 
-def test_grab_f6s_data():
+### Testing F6S class ###
+def test_grab_data():
     pass
 
-def test_grab_gspread_data():
+### Testing GS class ###
+def test_grab_data():
+    pass
+
+### Testing DBHandler class ###
+def test_init():
+    pass
+
+def test_save():
     pass

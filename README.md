@@ -21,7 +21,9 @@ Now type:
 - The email address as the first line  
 - The email address' password as the second line  
 - The F6S API Key as the third line  
+
 Save and close this file  
 
+### Running the program
 Run the src/main.py file whenever you would like the program to run.  
 Tip: It's advised to set a cronjob process on your Linux machine to run it periodically
