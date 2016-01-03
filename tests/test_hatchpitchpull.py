@@ -4,12 +4,10 @@ Copyright 2016 (c) Rakshak Talwar
 Released under the Apache 2 License
 """
 
-import sqlite3 as sql
-import requests
-import gspread
+from src.hatchpitchpull import *
 
-def grab_f6s_data():
+def test_grab_f6s_data():
     pass
 
-def grab_gspread_data():
+def test_grab_gspread_data():
     pass
