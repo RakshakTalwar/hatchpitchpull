@@ -1,9 +1,0 @@
-hatchpitchpull/__init__.py
-hatchpitchpull/hatchpitchpull.py
-hatchpitchpull/main.py
-hatchpitchpull.egg-info/PKG-INFO
-hatchpitchpull.egg-info/SOURCES.txt
-hatchpitchpull.egg-info/dependency_links.txt
-hatchpitchpull.egg-info/top_level.txt
-src/hatchpitchpull.py
-src/main.py

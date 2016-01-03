@@ -17,7 +17,6 @@ def test_grab_data():
 ### Testing DBHandler class ###
 def test_init():
     inst = DBHandler()
-    assert inst
 
 def test_save():
     pass
