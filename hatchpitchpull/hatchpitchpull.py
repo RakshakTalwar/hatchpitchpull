@@ -293,13 +293,13 @@ class DBHandler():
 
         # fill the insertion_string with contents
         for item in doc['data']:
+            vals = []
             if table_name == 'F_Application':
-                vals = []
                 for key in doc['fields']:
                     vals.append(item[key])
-                placeholders = "({0})".format(len(vals) * '?, ') # generate SQL friendly placeholders string
-                placeholders = placeholders[:-3] + ')' # remove the trailing comma
-                sql_command = "INSERT INTO {0} VALUES {1}".format(table_name, placeholders)
-                self.cursor.execute(sql_command, vals) # interpolate values into SQL command
             elif table_name == 'H_Application':
-                pass
+                vals.extend(item)
+            placeholders = "({0})".format(len(vals) * '?, ') # generate SQL friendly placeholders string
+            placeholders = placeholders[:-3] + ')' # remove the trailing comma
+            sql_command = "INSERT INTO {0} VALUES {1}".format(table_name, placeholders)
+            self.cursor.execute(sql_command, vals) # interpolate values into SQL command
