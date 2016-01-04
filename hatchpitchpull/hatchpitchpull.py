@@ -192,6 +192,7 @@ class GS():
 
     def grab_data(self, spreadsheet_key='1TgYK4D209oPrmv18-XVodH40JjvU69Xhkfjau3DlQxg', worksheet_name='Sheet1'):
         # open the respective worksheet within the Google Spreadsheet
+
         self.spreadsheet = self.client.open_by_key(spreadsheet_key)
         self.worksheet = self.spreadsheet.worksheet(worksheet_name)
 

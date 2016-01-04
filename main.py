@@ -19,6 +19,5 @@ f6s_data = fs.grab_data()
 db_handler.save('F_Application', f6s_data)
 """
 
-pdb.set_trace()
 # pull data from the Google Spreadsheet
 gs_data = gs.grab_data()
