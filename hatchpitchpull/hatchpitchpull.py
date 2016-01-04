@@ -206,7 +206,8 @@ class DBHandler():
     """Defines object which handles saving data into the sqlite db"""
     def __init__(self, db_path='db/HATCHscreening.db'):
         # create connection to sqlite database to make cursor object
-        self.connection = sql.connect(db_path)
+        self.db_path = db_path
+        self.connection = sql.connect(self.db_path)
         self.cursor = self.connection.cursor()
 
     def save(self, table_name, doc):
@@ -215,7 +216,8 @@ class DBHandler():
         with the field names in the respective table"""
 
         try:
-            # create a new cursor object
+            # create a new connection to sqlite database to make cursor object
+            self.connection = sql.connect(self.db_path)
             self.cursor = self.connection.cursor()
 
             if table_name == 'F_Application':
