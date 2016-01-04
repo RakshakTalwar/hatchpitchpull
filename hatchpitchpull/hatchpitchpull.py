@@ -163,7 +163,7 @@ class DBHandler():
         self.connection = sql.connect(db_path)
         self.cursor = self.connection.cursor()
 
-    def save(self, table_name, doc, sql_fields):
+    def save(self, table_name, doc):
         """Saves a dict with fields: [data, fields]
         Where data is a list of dicts, and fields is a list of fields which corresponds
         with the field names in the respective table"""
@@ -175,12 +175,12 @@ class DBHandler():
             if table_name == 'F_Application':
                 self.cursor.executescript("""
                     DROP TABLE IF EXISTS {0};
-                    CREATE TABLE {0}(StartedOn TEXT,
-                	SubmittedOn TEXT,
-                	CompanyTeam TEXT NOT NULL,
+                    CREATE TABLE {0}(StartedOn DateTime,
+                	SubmittedOn DateTime,
+                	CompanyTeam TEXT,
                 	City TEXT,
                 	Country TEXT,
-                	Industry Sector TEXT,
+                	IndustrySector TEXT,
                 	ContactFirstName TEXT,
                 	ContactLastName TEXT,
                 	ContactEmail TEXT,
@@ -195,38 +195,36 @@ class DBHandler():
                 	Availability TEXT,
                 	Agreement TEXT,
                 	AppStatus TEXT);
-                    {1}
-                """.format(table_name, self._all_insertions(table_name, doc, sql_fields)))
+                """.format(table_name))
+
+                self._complete_all_insertions(table_name, doc)
 
             elif table_name == 'H_Application':
                 pass
 
             self.connection.commit()
 
-        except sql.Error, e:
+        except Exception as e:
             if self.connection:
                 self.connection.rollback()
+            raise e
         finally:
             if self.connection:
                 self.connection.close()
 
-    def _all_insertions(self, table_name, doc, sql_fields):
-        """Returns a string with all insertions to be used within an executescript method.
+    def _complete_all_insertions(self, table_name, doc):
+        """Returns a list with all insertion commands to be used
         Accepts the data returned by grab_data method"""
-
-        # this will be returned
-        insertion_string = ""
 
         # fill the insertion_string with contents
         for item in doc['data']:
             if table_name == 'F_Application':
                 vals = []
-                for key in sql_fields:
+                for key in doc['fields']:
                     vals.append(item[key])
-                vals = tuple(vals)
-                pdb.set_trace()
-                insertion_string += "INSERT INTO {0} VALUES{1};".format(table_name, vals)
+                placeholders = "({0})".format(len(vals) * '?, ') # generate SQL friendly placeholders string
+                placeholders = placeholders[:-3] + ')' # remove the trailing comma
+                sql_command = "INSERT INTO {0} VALUES {1}".format(table_name, placeholders)
+                self.cursor.execute(sql_command, vals) # interpolate values into SQL command
             elif table_name == 'H_Application':
                 pass
-
-        return insertion_string

@@ -15,4 +15,4 @@ db_handler = DBHandler()
 # pull data from F6S site
 f6s_data = fs.grab_data()
 # store into the respective table
-db_handler.save('F_Application', f6s_data, fs.sql_fields)
+db_handler.save('F_Application', f6s_data)
