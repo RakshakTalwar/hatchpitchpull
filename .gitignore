@@ -4,3 +4,4 @@ sampledump.json
 *.egg-info
 .cache*
 *__pycache__
+client_secret*.json

@@ -4,11 +4,12 @@ Copyright 2016 (c) Rakshak Talwar
 Released under the Apache 2 License
 """
 
-import pdb, re, time
+import json, pdb, re, time
 import HTMLParser
 import sqlite3 as sql
 import requests
 import gspread
+from oauth2client.client import SignedJwtAssertionCredentials
 
 ### global variables ###
 hparse = HTMLParser.HTMLParser()
@@ -20,7 +21,7 @@ with open(auth_file_location, 'r') as auth_file:
     auth_ls = [item.strip() for item in auth_file.readlines()]
     auth_file.close()
 # define global variables for authentication
-EMAIL, EMAIL_PWD, F6S_KEY = auth_ls
+F6S_KEY = auth_ls[0]
 
 class F6S():
     """Defines object to pull data from F6S API"""
@@ -153,8 +154,52 @@ class F6S():
 
 class GS():
     """Defines object to pull data from gspread API"""
-    def grab_data(self):
-        pass
+    def __init__(self):
+        # initialize the client which will communicate with the Google Spreadsheet
+        json_key = json.load(open('client_secret.json'))
+        scope = ['https://spreadsheets.google.com/feeds']
+        credentials = SignedJwtAssertionCredentials(json_key['client_email'], json_key['private_key'], scope)
+        self.client = gspread.authorize(credentials)
+
+        # define the field names for the sql table
+        self.sql_fields = [
+            "SubmittedOn",
+            "Company",
+            "ShortDescription",
+            "City",
+            "StateProvince",
+            "Country",
+            "IndustrySector",
+            "CompanyWebsite",
+            "CompanySocial",
+            "ContactFirstName",
+            "ContactLastName",
+            "ContactEmail",
+            "ContactPhone",
+            "Employees",
+            "FoundersandExecs",
+            "Revenue",
+            "CurrentInvestment",
+            "Investors",
+            "Funding",
+            "Launch",
+            "Grapevine",
+            "Accelerators",
+            "Pitching",
+            "Availability",
+            "Agreement"
+        ]
+
+    def grab_data(self, spreadsheet_key='1TgYK4D209oPrmv18-XVodH40JjvU69Xhkfjau3DlQxg', worksheet_name='Sheet1'):
+        # open the respective worksheet within the Google Spreadsheet
+        self.spreadsheet = self.client.open_by_key(spreadsheet_key)
+        self.worksheet = self.spreadsheet.worksheet(worksheet_name)
+
+        # grab all data present within the worksheet
+        all_data = self.worksheet.get_all_values()
+
+        return all_data
+
 
 class DBHandler():
     """Defines object which handles saving data into the sqlite db"""
@@ -200,7 +245,36 @@ class DBHandler():
                 self._complete_all_insertions(table_name, doc)
 
             elif table_name == 'H_Application':
-                pass
+                self.cursor.executescript("""
+                    DROP TABLE IF EXISTS {0};
+                    CREATE TABLE {0}(SubmittedOn DateTime,
+                	Company Text,
+                	ShortDescription Text,
+                	City Text,
+                	StateProvince Text,
+                	Country Text,
+                	IndustrySector Text,
+                	CompanyWebsite Text,
+                	CompanySocial Text,
+                	ContactFirstName Text,
+                	ContactLastName Text,
+                	ContactEmail Text,
+                	ContactPhone Text,
+                	Employees INTEGER DEFAULT 0,
+                	FoundersandExecs Text,
+                	Revenue REAL,
+                	CurrentInvestment REAL DEFAULT 0,
+                	Investors Text,
+                	Funding Text,
+                	Launch DateTime,
+                	Grapevine Text,
+                	Accelerators Text,
+                	Pitching Text,
+                	Availability Text,
+                	Agreement Text);
+                """.format(table_name))
+
+                self._complete_all_insertions(table_name, doc)
 
             self.connection.commit()
 

@@ -11,12 +11,13 @@ $ sudo ./setup.sh
 
 ### To configure authentication details:  
 Create a file called: auth_info.txt  
-Now type:  
-- The email address as the first line  
-- The email address' password as the second line  
-- The F6S API Key as the third line  
+Now type:
+- The F6S API Key as the first line  
 
-Save and close this file  
+Save and close this file
+
+Follow these [instructions](https://support.google.com/cloud/answer/6158849?hl=en&authuser=1#serviceaccounts) to generate the client secret JSON file.
+Rename the downloaded JSON file to client_secret.json and save this file in the parent directory.  
 
 ### Running the program
 Run the main.py file whenever you would like the program to run.  

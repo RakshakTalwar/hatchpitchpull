@@ -1,2 +1,4 @@
 requests
 gspread
+oauth2client
+PyOpenSSL
