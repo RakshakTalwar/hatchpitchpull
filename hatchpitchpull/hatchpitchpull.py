@@ -196,10 +196,10 @@ class GS():
         self.spreadsheet = self.client.open_by_key(spreadsheet_key)
         self.worksheet = self.spreadsheet.worksheet(worksheet_name)
 
-        # grab all data present within the worksheet
-        all_data = self.worksheet.get_all_values()
+        # grab all data present within the worksheet, not including headers
+        all_data = self.worksheet.get_all_values()[1:]
 
-        return all_data
+        return {'data' : all_data, 'fields' : self.sql_fields}
 
 
 class DBHandler():
