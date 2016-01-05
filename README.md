@@ -22,6 +22,9 @@ Look inside the client_secret.json file and share the Google spreadsheet with th
 
 ### Running the program
 Run the main.py file whenever you would like the program to run.  
+```sh
+$ python main.py
+```
 Tip: It's advised to set a cronjob process on your Linux machine to run it periodically.
 
 ### Accessing the SQLite DB
